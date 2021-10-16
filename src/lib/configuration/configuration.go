@@ -8,13 +8,15 @@ import (
 )
 
 var (
-	DBTypeDefault            = dblayer.DBTYPE("mongodb")
-	DBConnectionDefault      = "mongodb://127.0.0.1:27017"
-	RestfulEPDefault         = "localhost:8888"
-	RestfulTLSEPDefault      = "localhost:9999"
-	RestfulTLSCert           = "etc/cert.pem"
-	RestfulTLSKey            = "etc/key.pem"
-	AMQPMessageBrokerDefault = "amqp://guest:guest@localhost:5672"
+	DBTypeDefault             = dblayer.DBTYPE("mongodb")
+	DBConnectionDefault       = "mongodb://127.0.0.1:27017"
+	RestfulEPDefault          = "localhost:8888"
+	RestfulTLSEPDefault       = "localhost:9999"
+	RestfulTLSCertDefault     = "etc/cert.pem"
+	RestfulTLSKeyDefault      = "etc/key.pem"
+	MessageBrokerTypeDefault  = "kafka"
+	AMQPMessageBrokerDefault  = "amqp://guest:guest@localhost:5672"
+	KafkaMessageBrokerDefault = []string{"localhost:9092"}
 )
 
 type ServiceConfig struct {
@@ -24,7 +26,9 @@ type ServiceConfig struct {
 	RestfulTLSEndpoint string         `json:"restfulapi_tlsendpoint"`
 	RestfulTLSCert     string         `json:"restfulapi_tlscert"`
 	RestfulTLSKey      string         `json:"restfulapi_tlskey"`
+	MessageBrokerType  string         `json:"message_broker_type"`
 	AMQPMessageBroker  string         `json:"amqp_message_broker"`
+	KafkaMessageBroker []string       `json:"kafka_message_broker"`
 }
 
 func ExtractConfiguration(filename string) (ServiceConfig, error) {
@@ -33,9 +37,11 @@ func ExtractConfiguration(filename string) (ServiceConfig, error) {
 		DBConnectionDefault,
 		RestfulEPDefault,
 		RestfulTLSEPDefault,
-		RestfulTLSCert,
-		RestfulTLSKey,
+		RestfulTLSCertDefault,
+		RestfulTLSKeyDefault,
+		MessageBrokerTypeDefault,
 		AMQPMessageBrokerDefault,
+		KafkaMessageBrokerDefault,
 	}
 
 	file, err := os.Open(filename)

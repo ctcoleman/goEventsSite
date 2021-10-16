@@ -15,3 +15,8 @@ type EventCreatedEvent struct {
 func (e *EventCreatedEvent) EventName() string {
 	return "eventCreated"
 }
+
+// generate a god damn Partition Key because kafka needs more god damn details for each Event
+func (e *EventCreatedEvent) PartitionKey() string {
+	return e.ID // you already have a fucking unique ID you can use dumb ass
+}
