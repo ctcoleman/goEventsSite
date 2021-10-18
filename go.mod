@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/Shopify/sarama v1.30.0
 	github.com/gorilla/mux v1.8.0
+	github.com/mitchellh/mapstructure v1.4.2
 	github.com/streadway/amqp v1.0.0
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )
@@ -22,7 +23,6 @@ require (
 	github.com/jcmturner/gokrb5/v8 v8.4.2 // indirect
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
-	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	golang.org/x/crypto v0.0.0-20210920023735-84f357641f63 // indirect

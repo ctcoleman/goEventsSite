@@ -15,11 +15,11 @@ type EventProcessor struct {
 	Database      persistence.DatabaseHandler
 }
 
-// ProcessEvents method listens for event.created event and processes event through handleEvent function
+// ProcessEvents method listens for eventCreated event and processes event through handleEvent function
 func (p *EventProcessor) ProcessEvents() error {
 	log.Println("Booking service listening to events...")
 
-	received, errors, err := p.EventListener.Listen("event.created")
+	received, errors, err := p.EventListener.Listen("eventCreated")
 	if err != nil {
 		panic(err)
 	}
