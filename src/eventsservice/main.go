@@ -63,7 +63,7 @@ func main() {
 
 	// RestfulApi start http and https
 	fmt.Println("Starting http(s) restful service router")
-	httpErrChan, httptlsErrChan := rest.ServeApi(config.RestfulEndpoint, config.RestfulTLSEndpoint, config.RestfulTLSCert, config.RestfulTLSKey, dbhandler, eventEmitter)
+	httpErrChan, httptlsErrChan := rest.ServeAPI(config.RestfulEndpoint, config.RestfulTLSEndpoint, config.RestfulTLSCert, config.RestfulTLSKey, dbhandler, eventEmitter)
 	select {
 	case err := <-httpErrChan:
 		panic(err)

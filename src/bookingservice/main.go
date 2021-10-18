@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"goEventsSite/src/bookingservice/listener"
-	"goEventsSite/src/eventsservice/rest"
+	"goEventsSite/src/bookingservice/rest"
 	"goEventsSite/src/lib/configuration"
 	"goEventsSite/src/lib/msgqueue"
 	msgqueue_amqp "goEventsSite/src/lib/msgqueue/amqp"
@@ -80,7 +80,7 @@ func main() {
 	go processor.ProcessEvents()
 
 	// RestfulApi start http and https
-	httpErrChan, httptlsErrChan := rest.ServeApi(config.RestfulEndpoint, config.RestfulTLSEndpoint, config.RestfulTLSCert, config.RestfulTLSKey, dbhandler, eventEmitter)
+	httpErrChan, httptlsErrChan := rest.ServeAPI(config.RestfulEndpoint, config.RestfulTLSEndpoint, config.RestfulTLSCert, config.RestfulTLSKey, dbhandler, eventEmitter)
 	select {
 	case err := <-httpErrChan:
 		panic("--error conencting to rest over http -- " + err.Error())

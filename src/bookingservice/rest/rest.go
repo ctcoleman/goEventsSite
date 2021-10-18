@@ -5,11 +5,12 @@ import (
 	"goEventsSite/src/lib/persistence"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
 // ServeHTTP uses Gorilla/Mux to serve up the booking api
-func ServeHTTP(endpoint, tlsendpoint string, dbHandler persistence.DatabaseHandler, eventEmitter msgqueue.EventEmitter) (chan error, chan error) {
+func ServeAPI(endpoint, tlsendpoint, tlscert, tlskey string, dbHandler persistence.DatabaseHandler, eventEmitter msgqueue.EventEmitter) (chan error, chan error) {
 	handler := newBookingHandler(dbHandler, eventEmitter)
 	r := mux.NewRouter()
 
@@ -32,12 +33,16 @@ func ServeHTTP(endpoint, tlsendpoint string, dbHandler persistence.DatabaseHandl
 	httpErrChan := make(chan error)
 	httptlsErrChan := make(chan error)
 
+	// enable cors to allow http requests from frontend
+	server := handlers.CORS()(r)
+
+	// serve that shit up
 	go func() {
-		httpErrChan <- http.ListenAndServe(endpoint, r)
+		httpErrChan <- http.ListenAndServe(endpoint, server)
 	}()
 	// serve that shit up...securely
 	go func() {
-		httptlsErrChan <- http.ListenAndServeTLS(tlsendpoint, "../../../etc/keys/cert.pem", "../../../etc/keys/key.pem", r)
+		httptlsErrChan <- http.ListenAndServeTLS(tlsendpoint, "../../../etc/keys/cert.pem", "../../../etc/keys/key.pem", server)
 	}()
 
 	return httpErrChan, httptlsErrChan
