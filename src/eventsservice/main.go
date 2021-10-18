@@ -22,6 +22,7 @@ func main() {
 	// extract the config
 	config, _ := configuration.ExtractConfiguration(*confPath)
 
+	// are we using AMQP (RabbitMQ) or is it fucking Kafka
 	switch config.MessageBrokerType {
 	case "amqp":
 		// connect to the AMQP broker
