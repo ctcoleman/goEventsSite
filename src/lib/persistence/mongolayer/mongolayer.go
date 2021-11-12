@@ -92,7 +92,7 @@ func (mgoLayer *MongoDBLayer) FindAllAvailableEvents() ([]persistence.Event, err
 
 	events := []persistence.Event{} // it's a slice because we return multiple events
 
-	return []persistence.Event{}, s.DB(DB).C(EVENTS).Find(nil).All(&events)
+	return events, s.DB(DB).C(EVENTS).Find(nil).All(&events)
 }
 
 // 	FindAllLocations queries the mognodb instance for all available location entries

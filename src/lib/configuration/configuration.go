@@ -5,16 +5,17 @@ import (
 	"fmt"
 	"goEventsSite/src/lib/persistence/dblayer"
 	"os"
+	"strings"
 )
 
 var (
 	DBTypeDefault             = dblayer.DBTYPE("mongodb")
-	DBConnectionDefault       = "mongodb://127.0.0.1:27017"
+	DBConnectionDefault       = "mongodb://localhost:27017"
 	RestfulEPDefault          = "localhost:8888"
 	RestfulTLSEPDefault       = "localhost:9999"
-	RestfulTLSCertDefault     = "etc/cert.pem"
-	RestfulTLSKeyDefault      = "etc/key.pem"
-	MessageBrokerTypeDefault  = "kafka"
+	RestfulTLSCertDefault     = "../../etc/keys/cert.pem"
+	RestfulTLSKeyDefault      = "../../etc/keys/key.pem"
+	MessageBrokerTypeDefault  = "amqp"
 	AMQPMessageBrokerDefault  = "amqp://guest:guest@localhost:5672"
 	KafkaMessageBrokerDefault = []string{"localhost:9092"}
 )
@@ -49,10 +50,28 @@ func ExtractConfiguration(filename string) (ServiceConfig, error) {
 		fmt.Println("Configuration file not found. Using default values")
 		return conf, err
 	}
+
 	err = json.NewDecoder(file).Decode(&conf)
-	if broker := os.Getenv("AMQP_URL"); broker != "" {
-		conf.AMQPMessageBroker = broker
+	if err != nil {
+		panic("could not decode json config file" + err.Error())
 	}
 
-	return conf, err
+	if v := os.Getenv("LISTEN_URL"); v != "" {
+		conf.RestfulEndpoint = v
+	}
+
+	if v := os.Getenv("MONGO_URL"); v != "" {
+		conf.Databasetype = "mongodb"
+		conf.DBConnection = v
+	}
+
+	if v := os.Getenv("AMQP_URL"); v != "" {
+		conf.MessageBrokerType = "amqp"
+		conf.AMQPMessageBroker = v
+	} else if v := os.Getenv("KAFKA_BROKER_URLS"); v != "" {
+		conf.MessageBrokerType = "kafka"
+		conf.KafkaMessageBroker = strings.Split(v, ",")
+	}
+
+	return conf, nil
 }
