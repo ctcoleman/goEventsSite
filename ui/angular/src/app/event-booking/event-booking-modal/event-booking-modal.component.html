@@ -1,0 +1,13 @@
+<ibm-modal size="sm" [open]="open" (overlaySelected)="open = false">
+  <ibm-modal-header (closeSelect)="open = false">
+    <h2 ibmModalHeaderLabel>GoEvents</h2>
+    <h3 ibmModalHeaderHeading>Book Event</h3>
+  </ibm-modal-header>
+  <section ibmModalContent>
+    <app-event-booking-form></app-event-booking-form>
+  </section>
+  <ibm-modal-footer>
+    <button ibmButton="primary" (click)="closeModal()">Book Event</button>
+  </ibm-modal-footer>
+</ibm-modal>
+

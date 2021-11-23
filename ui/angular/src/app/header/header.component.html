@@ -1,6 +1,9 @@
 <ibm-header brand="GoEvents">
-    <ibm-header-navigation ariaLabel="GoEvents">
-        <ibm-header-item [route]="['/']">Home</ibm-header-item>
-        <ibm-header-item [route]="['/events']">Events</ibm-header-item>
-    </ibm-header-navigation>
+    <ibm-hamburger (selected)="hasHamburger = !hasHamburger" class="bx--header__menu-toggle__hidden"></ibm-hamburger>
+    <ibm-header-navigation [navigationItems]="headerItems" ariaLabel="GoEvents"></ibm-header-navigation>
+    <ibm-sidenav
+        *ngIf="hasHamburger"
+        [navigationItems]="headerItems"
+        class="bx--header__menu-toggle__hidden"
+        style="color: #c6c6c6;"></ibm-sidenav>
 </ibm-header>

@@ -8,7 +8,5 @@ import { Component, OnInit } from '@angular/core';
 export class EventsListContainerComponent implements OnInit {
   constructor() {}
 
-  ngOnInit(): void {
-    console.log('hello from Events')
-  }
+  ngOnInit(): void {}
 }

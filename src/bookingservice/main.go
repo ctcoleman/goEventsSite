@@ -83,8 +83,9 @@ func main() {
 	httpErrChan, httptlsErrChan := rest.ServeAPI(config.RestfulEndpoint, config.RestfulTLSEndpoint, config.RestfulTLSCert, config.RestfulTLSKey, dbhandler, eventEmitter)
 	select {
 	case err := <-httpErrChan:
-		panic("--error conencting to rest over http -- " + err.Error())
+		panic("--error conencting booking rest api over http -- " + err.Error())
 	case err := <-httptlsErrChan:
-		panic("--error conencting to rest over https -- " + err.Error())
+		//panic("--error conencting booking rest api over https -- " + err.Error())
+		fmt.Println(err)
 	}
 }

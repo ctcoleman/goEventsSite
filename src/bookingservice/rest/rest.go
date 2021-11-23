@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"goEventsSite/src/lib/msgqueue"
 	"goEventsSite/src/lib/persistence"
 	"net/http"
@@ -38,11 +39,13 @@ func ServeAPI(endpoint, tlsendpoint, tlscert, tlskey string, dbHandler persisten
 
 	// serve that shit up
 	go func() {
+		fmt.Println("restful http server listening at " + endpoint)
 		httpErrChan <- http.ListenAndServe(endpoint, server)
 	}()
 	// serve that shit up...securely
 	go func() {
-		httptlsErrChan <- http.ListenAndServeTLS(tlsendpoint, "../../../etc/keys/cert.pem", "../../../etc/keys/key.pem", server)
+		fmt.Println("secure restful https server listening at " + tlsendpoint)
+		httptlsErrChan <- http.ListenAndServeTLS(tlsendpoint, tlscert, tlskey, server)
 	}()
 
 	return httpErrChan, httptlsErrChan
