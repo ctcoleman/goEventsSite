@@ -5,3 +5,7 @@
   [striped]="false"
 >
 </ibm-table>
+
+<ng-template #customItemTemplate let-data="data">
+  <app-event-booking-modal-container [eventID]="data.eventID">Book Event</app-event-booking-modal-container>
+</ng-template>

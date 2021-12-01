@@ -20,7 +20,7 @@ func main() {
 	var eventListener msgqueue.EventListener
 
 	// get user config if it exist
-	confPath := flag.String("config", "./configuration/config.json", "path to config file")
+	confPath := flag.String("config", "../lib/configuration/bookingconfig.json", "path to config file")
 	flag.Parse()
 	// extract the config
 	config, _ := configuration.ExtractConfiguration(*confPath)
@@ -35,13 +35,13 @@ func main() {
 		}
 
 		// connect to the god damn AMQP listener
-		eventListener, err = msgqueue_amqp.NewAMQPEventListener(conn, "events")
+		eventListener, err = msgqueue_amqp.NewAMQPEventListener(conn, "events", "booking")
 		if err != nil {
 			panic(err)
 		}
 
 		// connect to the AMQP emitter
-		eventEmitter, err = msgqueue_amqp.NewAMQPEventEmitter(conn)
+		eventEmitter, err = msgqueue_amqp.NewAMQPEventEmitter(conn, "events")
 		if err != nil {
 			panic("-- error connecting to amqp emitter -- " + err.Error())
 		}

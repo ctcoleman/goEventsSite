@@ -40,10 +40,10 @@ func (p *EventProcessor) handleEvent(event msgqueue.Event) {
 	switch e := event.(type) {
 	// if event is created then fucking update the database
 	case *contracts.EventCreatedEvent:
-		p.Database.AddEvent(persistence.Event{ID: bson.ObjectId(e.ID)})
 		if !bson.IsObjectIdHex(e.ID) {
 			log.Printf("event %v did not contain valid object ID", e)
 		}
+		p.Database.AddEvent(persistence.Event{ID: bson.ObjectId(e.ID)})
 		log.Printf("event %s created: %s", e.ID, e)
 	// if location is created then fucking update the database
 	case *contracts.LocationCreatedEvent:

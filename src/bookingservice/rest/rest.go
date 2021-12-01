@@ -15,19 +15,10 @@ func ServeAPI(endpoint, tlsendpoint, tlscert, tlskey string, dbHandler persisten
 	handler := newBookingHandler(dbHandler, eventEmitter)
 	r := mux.NewRouter()
 
-	// define the booking subrouter
-	bookingrouter := r.Path("/events/{eventID}/bookings").Subrouter()
-
-	// list all bookings
-	bookingrouter.
-		Methods("GET").
-		Path("").
-		HandlerFunc(handler.getAllBookingsHandler)
-
 	// add a new booking
-	bookingrouter.
+	r.
 		Methods("POST").
-		Path("").
+		Path("/events/{eventID}/bookings").
 		HandlerFunc(handler.addNewBookingHandler)
 
 	// run blocking functions as goroutines

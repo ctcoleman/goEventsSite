@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import {
   Table,
   TableItem,
   TableHeaderItem,
   TableModel,
 } from 'carbon-components-angular';
+import { EventBookingModalContainerComponent } from 'src/app/event-booking/event-booking-modal-container/event-booking-modal-container.component';
 import { Event } from '../../../models/event';
 import { EventsService } from '../events.service';
 
@@ -14,6 +15,9 @@ import { EventsService } from '../events.service';
   styleUrls: ['./events-list.component.scss'],
 })
 export class EventsListComponent implements OnInit {
+  @ViewChild('customItemTemplate')
+  protected customItemTemplate?: TemplateRef<any>;
+
   events: Event[] = [];
   model: TableModel = {} as TableModel;
   skeleton: boolean = true;
@@ -75,7 +79,7 @@ export class EventsListComponent implements OnInit {
             minute: '2-digit',
           }),
         }),
-        new TableItem({ data: 'Dummy' }),
+        new TableItem({ data: { eventID: event.ID }, template: this.customItemTemplate }),
       ]);
     }
     return eventsTableArray;

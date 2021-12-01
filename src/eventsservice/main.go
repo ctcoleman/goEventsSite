@@ -17,7 +17,7 @@ import (
 func main() {
 	var eventEmitter msgqueue.EventEmitter
 
-	confPath := flag.String("conf", `.\configuration\config.json`, "flag to set path to config json file")
+	confPath := flag.String("conf", `../lib/configuration/eventsconfig.json`, "flag to set path to config json file")
 	flag.Parse()
 	// extract the config
 	config, _ := configuration.ExtractConfiguration(*confPath)
@@ -32,7 +32,7 @@ func main() {
 		}
 
 		// connect to the AMQP emitter
-		eventEmitter, err = msgqueue_amqp.NewAMQPEventEmitter(conn)
+		eventEmitter, err = msgqueue_amqp.NewAMQPEventEmitter(conn, "events")
 		if err != nil {
 			panic("-- error connecting to amqp emitter -- " + err.Error())
 		}

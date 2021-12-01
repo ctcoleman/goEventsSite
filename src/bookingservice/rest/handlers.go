@@ -25,23 +25,6 @@ func newBookingHandler(dbhandler persistence.DatabaseHandler, eventEmitter msgqu
 	}
 }
 
-// getAllBookingsHandler queries the db for all of a users booking
-func (bh *bookingHandler) getAllBookingsHandler(w http.ResponseWriter, r *http.Request) {
-	bookings, err := bh.dbhandler.FindAllUserBookings([]byte("userID"))
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, `{error: could not find event bookings for user %s`, err)
-	}
-
-	// encode to json
-	w.Header().Set("Content-Type", "applicaiton/json;charset=utf8")
-	err = json.NewEncoder(w).Encode(&bookings)
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, `{error: could not encode event bookings to json %s}`, err)
-	}
-}
-
 // addNewBookingHandler adds a new booking for a user to the db
 func (bh *bookingHandler) addNewBookingHandler(w http.ResponseWriter, r *http.Request) {
 	routeVars := mux.Vars(r)

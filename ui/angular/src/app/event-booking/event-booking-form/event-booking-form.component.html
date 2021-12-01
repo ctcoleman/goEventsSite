@@ -2,14 +2,14 @@
   ibmModalContentText
   class="bx--modal-content__regular-content modal-content-text"
 >
-  Book your event today
+  {{ eventName }}
 </h2>
 <ibm-number
   class="modal-select"
   label="Tickets"
   min="1"
   placeholder="1"
-  [value]="inputValue"
+  [value]="seats"
   (change)="onChange($event)"
 >
 </ibm-number>

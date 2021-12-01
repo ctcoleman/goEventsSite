@@ -9,6 +9,7 @@ import {
   TableModule,
 } from 'carbon-components-angular';
 import { EventsRoutingModule } from './events-routing.module';
+import { EventBookingModule } from '../event-booking/event-booking.module';
 
 @NgModule({
   declarations: [EventsListContainerComponent, EventsListComponent],
@@ -19,6 +20,7 @@ import { EventsRoutingModule } from './events-routing.module';
     LoadingModule,
     HttpClientModule,
     EventsRoutingModule,
+    EventBookingModule
   ],
   exports: [EventsListContainerComponent],
 })

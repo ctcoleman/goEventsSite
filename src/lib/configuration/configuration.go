@@ -15,7 +15,7 @@ var (
 	RestfulTLSEPDefault       = "localhost:9999"
 	RestfulTLSCertDefault     = "../../etc/keys/cert.pem"
 	RestfulTLSKeyDefault      = "../../etc/keys/key.pem"
-	MessageBrokerTypeDefault  = "amqp"
+	MessageBrokerTypeDefault  = "kafka"
 	AMQPMessageBrokerDefault  = "amqp://guest:guest@localhost:5672"
 	KafkaMessageBrokerDefault = []string{"localhost:9092"}
 )

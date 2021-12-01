@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   EVENTSURL: 'http://localhost:8888/',
+  BOOKINGURL: 'http://localhost:6666/',
 };
 
 /*

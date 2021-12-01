@@ -1,0 +1,4 @@
+{
+  "restfulapi_endpoint": "localhost:8888",
+  "restfulapi_tlsendpoint": "localhost:9999"
+}

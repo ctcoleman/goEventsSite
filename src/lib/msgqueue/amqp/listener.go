@@ -1,10 +1,12 @@
 package amqp
 
 import (
-	"encoding/json"
 	"fmt"
-	"goEventsSite/src/contracts"
 	"goEventsSite/src/lib/msgqueue"
+	"os"
+	"time"
+
+	amqphelper "goEventsSite/src/lib/helper/amqp"
 
 	"github.com/streadway/amqp"
 )
@@ -12,22 +14,47 @@ import (
 // amqpEventListener defines the connection and queue to listen for AMQP events
 type amqpEventListener struct {
 	connection *amqp.Connection
+	exchange   string
 	queue      string
+	mapper     msgqueue.EventMapper
 }
 
-// setup method creates a channel to the AMQP broker and defines the queue to listen on
-func (a *amqpEventListener) setup() error {
-	// create a a god damn channel to the AMQP broker
-	channel, err := a.connection.Channel()
-	if err != nil {
-		return nil
+func NewAMQPEventListenerFromEnvironment() (msgqueue.EventListener, error) {
+	var url string
+	var exchange string
+	var queue string
+
+	if url = os.Getenv("AMQP_URL"); url == "" {
+		url = "amqp://localhost:5672"
 	}
-	defer channel.Close()
 
-	// declare the fucking AMQP Queue to listen on....you know....queue fucking messaging??
-	_, err = channel.QueueDeclare(a.queue, true, false, false, false, nil)
+	if exchange = os.Getenv("AMQP_EXCHANGE"); exchange == "" {
+		exchange = "example"
+	}
 
-	return err
+	if exchange = os.Getenv("AMQP_QUEUE"); queue == "" {
+		queue = "example"
+	}
+
+	conn := <-amqphelper.RetryConnect(url, 5*time.Second)
+	return NewAMQPEventListener(conn, exchange, queue)
+}
+
+// NewAMQPEventListener define new AMQP listener and pass it through setup
+func NewAMQPEventListener(conn *amqp.Connection, exchange string, queue string) (msgqueue.EventListener, error) {
+	listener := amqpEventListener{
+		connection: conn,
+		exchange:   exchange,
+		queue:      queue,
+		mapper:     msgqueue.NewEventMapper(),
+	}
+
+	err := listener.setup()
+	if err != nil {
+		return nil, err
+	}
+
+	return &listener, nil
 }
 
 // Listen function listens for events based on given name and maps those events to the corresponding event structure
@@ -41,15 +68,15 @@ func (a *amqpEventListener) Listen(eventNames ...string) (<-chan msgqueue.Event,
 
 	for _, eventName := range eventNames {
 		// bind the event names to the given fucking queue so we can listen for the right fucking events
-		if err := channel.QueueBind(a.queue, eventName, "events", false, nil); err != nil {
-			return nil, nil, err
+		if err := channel.QueueBind(a.queue, eventName, a.exchange, false, nil); err != nil {
+			return nil, nil, fmt.Errorf("could not bind event %s to queue %s: %s", eventName, a.queue, err)
 		}
 	}
 
 	// consume message events from the queue. nom...nom...nom
 	msgs, err := channel.Consume(a.queue, "", false, false, false, false, nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("could not consume queue: %s", err)
 	}
 
 	// create events and error variables from each channel
@@ -78,43 +105,42 @@ func (a *amqpEventListener) Listen(eventNames ...string) (<-chan msgqueue.Event,
 				continue
 			}
 
-			// create a new fucking event
-			var event msgqueue.Event
-
-			switch eventName {
-			case "eventCreated":
-				event = new(contracts.EventCreatedEvent)
-			default:
-				errors <- fmt.Errorf("event type %s is unknown", eventName)
-				continue
-			}
-
-			// store the message body json data
-			err := json.Unmarshal(msg.Body, event)
+			event, err := a.mapper.MapEvent(eventName, msg.Body)
 			if err != nil {
-				errors <- err
+				errors <- fmt.Errorf("could not unmarshal event %s: %s", eventName, err)
+				msg.Nack(false, false)
 				continue
 			}
+
 			events <- event
+			msg.Ack(false)
 		}
 	}()
 
 	return events, errors, nil
 }
 
-// NewAMQPEventListener define new AMQP listener and pass it through setup
-func NewAMQPEventListener(conn *amqp.Connection, queue string) (msgqueue.EventListener, error) {
-	// define the listener with the given connection and queue details
-	listener := &amqpEventListener{
-		connection: conn,
-		queue:      queue,
-	}
+func (l *amqpEventListener) Mapper() msgqueue.EventMapper {
+	return l.mapper
+}
 
-	// run that shit through the setup function
-	err := listener.setup()
+// setup method creates a channel to the AMQP broker and defines the queue to listen on
+func (a *amqpEventListener) setup() error {
+	channel, err := a.connection.Channel()
 	if err != nil {
-		return nil, err
+		return nil
+	}
+	defer channel.Close()
+
+	err = channel.ExchangeDeclare(a.exchange, "topic", true, false, false, false, nil)
+	if err != nil {
+		return err
 	}
 
-	return listener, nil
+	_, err = channel.QueueDeclare(a.queue, true, false, false, false, nil)
+	if err != nil {
+		return fmt.Errorf("could not declare queue %s: %s", a.queue, err)
+	}
+
+	return nil
 }

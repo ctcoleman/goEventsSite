@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
-import { BaseModal, ModalService } from 'carbon-components-angular';
-import { Observable, Subject } from 'rxjs';
+import { Component, Inject } from '@angular/core';
+import { BaseModal } from 'carbon-components-angular';
 
 @Component({
   selector: 'app-event-booking-modal',
@@ -8,7 +7,10 @@ import { Observable, Subject } from 'rxjs';
   styleUrls: ['./event-booking-modal.component.scss'],
 })
 export class EventBookingModalComponent extends BaseModal {
-  constructor(protected modalService: ModalService) {
+  constructor(@Inject('eventID') public eventID: string) {
     super();
+  }
+  
+  bookEvent(): void {
   }
 }

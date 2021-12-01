@@ -8,19 +8,14 @@ import {
   PlaceholderModule,
   SelectModule,
 } from 'carbon-components-angular';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { EventBookingModalComponent } from './event-booking-modal/event-booking-modal.component';
-import { EventBookingPageComponent } from './event-booking-page/event-booking-page.component';
-import { EventBookingModalBtnComponent } from './event-booking-modal-btn/event-booking-modal-btn.component';
 import { EventBookingFormComponent } from './event-booking-form/event-booking-form.component';
 import { EventBookingModalContainerComponent } from './event-booking-modal-container/event-booking-modal-container.component';
 
 @NgModule({
   declarations: [
     EventBookingModalComponent,
-    EventBookingPageComponent,
-    EventBookingModalBtnComponent,
     EventBookingFormComponent,
     EventBookingModalContainerComponent,
   ],
@@ -28,12 +23,12 @@ import { EventBookingModalContainerComponent } from './event-booking-modal-conta
     CommonModule,
     SelectModule,
     NumberModule,
-    BrowserModule,
     FormsModule,
     ButtonModule,
     ModalModule,
     PlaceholderModule,
   ],
+  exports: [ EventBookingModalContainerComponent ],
   providers: [ModalService],
 })
 export class EventBookingModule {}
